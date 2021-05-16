@@ -1,5 +1,5 @@
 service:
-  name: serverless-app
+  name: aleen-elsayed-serverless-10-05
 
 plugins:
   - serverless-webpack
@@ -16,6 +16,8 @@ provider:
     GROUPS_TABLE: Groups-${self:provider.stage}
     IMAGES_TABLE: Images-${self:provider.stage}
     IMAGE_ID_INDEX: ImageIdIndex
+    IMAGES_S3_BUCKET: aleen-10-05-images-${self:provider.stage}
+    SIGNED_URL_EXPIRATION: 300
 
   iamRoleStatements:
     - Effect: Allow
@@ -27,6 +29,7 @@ provider:
 
     - Effect: Allow
       Action:
+        - dynamodb:PutItem
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}
 
@@ -35,6 +38,11 @@ provider:
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.IMAGES_TABLE}/index/${self:provider.environment.IMAGE_ID_INDEX}
 
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
 functions:
   GetGroups:
     handler: src/lambda/http/getGroups.handler
@@ -74,6 +82,20 @@ functions:
           path: images/{imageId}
           cors: true
 
+  CreateImage:
+    handler: src/lambda/http/createImage.handler
+    events:
+      - http:
+          method: post
+          path: groups/{groupId}/images
+          cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create a new image
+            description: Create a new image
+            requestModels:
+              'application/json': ImageRequest # the same as the on in custom >> documentations
+
 resources:
   Resources:
     RequestBodyValidator:
@@ -84,6 +106,44 @@ resources:
           Ref: ApiGatewayRestApi
         ValidateRequestBody: true
         ValidateRequestParameters: false
+
+    AttachmentsBucket:
+      Type: AWS::S3::Bucket
+      # DependsOn: SNSTopicPolicy
+      Properties:
+        BucketName: ${self:provider.environment.IMAGES_S3_BUCKET}
+        # NotificationConfiguration:
+        #   TopicConfigurations:
+        #     - Event: s3:ObjectCreated:Put
+        #       Topic: !Ref ImagesTopic
+        CorsConfiguration:
+          CorsRules:
+            -
+              AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              MaxAge: 3000
+
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        PolicyDocument:
+          Id: MyPolicy
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
+        Bucket: !Ref AttachmentsBucket
 
     GroupsDynamoDBTable:
       Type: AWS::DynamoDB::Table
@@ -136,3 +196,7 @@ custom:
       - name: GroupRequest
         contentType: application/json
         schema: ${file(models/create-group-request.json)}
+
+      - name: ImageRequest
+        contentType: application/json
+        schema: ${file(models/create-image-request.json)}

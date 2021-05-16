@@ -12,11 +12,11 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     const result = await docClient.query ({
         TableName: imagesTable,
+        IndexName: imageIdIndex,
         KeyConditionExpression: 'imageId = :imageId',
         ExpressionAttributeValues: {
             ':imageId': imageId
-        },
-        ScanIndexForward: false
+        }
     }).promise()
 
     if (result.Count !== 0) {
