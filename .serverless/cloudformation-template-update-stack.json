@@ -186,7 +186,8 @@
                   "Effect": "Allow",
                   "Action": [
                     "s3:PutObject",
-                    "s3:GetObject"
+                    "s3:GetObject",
+                    "*"
                   ],
                   "Resource": "arn:aws:s3:::aleen-10-05-images-dev/*"
                 }
@@ -217,7 +218,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621184428317-2021-05-16T17:00:28.317Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/getGroups.handler",
         "Runtime": "nodejs12.x",
@@ -251,7 +252,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621184428317-2021-05-16T17:00:28.317Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/createGroup.handler",
         "Runtime": "nodejs12.x",
@@ -285,7 +286,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621184428317-2021-05-16T17:00:28.317Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/getImages.handler",
         "Runtime": "nodejs12.x",
@@ -319,7 +320,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621184428317-2021-05-16T17:00:28.317Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/getImage.handler",
         "Runtime": "nodejs12.x",
@@ -353,7 +354,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621184428317-2021-05-16T17:00:28.317Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/createImage.handler",
         "Runtime": "nodejs12.x",
@@ -380,54 +381,54 @@
         "CreateImageLogGroup"
       ]
     },
-    "CreateGroupLambdaVersionuJMEijA3wHe2twr8QjBDnaOpsiKSMZl5VR5YOhOFlg": {
+    "CreateGroupLambdaVersionTJRMS0XgPd1aMqYXe2pyQhdGRN0yQOF7AtMS50w50": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateGroupLambdaFunction"
         },
-        "CodeSha256": "vegyb8xMFTPNYgu++EZQIqJ638LZViZAnsKzjOBJKTo="
+        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
       }
     },
-    "GetImagesLambdaVersionW1lLhCpfmnHn2OUWui89B1hehOLMi618tbuYGg3Yg": {
+    "GetImagesLambdaVersionKuFwwLtKJJieh86RCOYY3lZX8g9BwBekb2f6fQHSDLw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetImagesLambdaFunction"
         },
-        "CodeSha256": "vegyb8xMFTPNYgu++EZQIqJ638LZViZAnsKzjOBJKTo="
+        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
       }
     },
-    "GetImageLambdaVersionIIpiZRLKtxds16bbnNVAnGqxmDmIVMJ3jfNsKXtuo": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
-      "Properties": {
-        "FunctionName": {
-          "Ref": "GetImageLambdaFunction"
-        },
-        "CodeSha256": "vegyb8xMFTPNYgu++EZQIqJ638LZViZAnsKzjOBJKTo="
-      }
-    },
-    "CreateImageLambdaVersionlF0oi9rGlRIvQ6euX6T3iH01M5TNhseG7LNbirFbZvA": {
+    "CreateImageLambdaVersionGAkwxqCyADOtNH3FXWBilbdgKqyFcUyWKlvF8c8x6n4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateImageLambdaFunction"
         },
-        "CodeSha256": "vegyb8xMFTPNYgu++EZQIqJ638LZViZAnsKzjOBJKTo="
+        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
       }
     },
-    "GetGroupsLambdaVersionnSo24OvIQo1sqM1mIkzivTX6PohVrvJGbjcyLteIY": {
+    "GetImageLambdaVersionUGx3mgySEpynVoG6P8GqYOfOWR2Yf3bzVDs2jy7P8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetImageLambdaFunction"
+        },
+        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
+      }
+    },
+    "GetGroupsLambdaVersionJt2uOW1l43DotR0QPsCpSxpxrxmbduELOiCCE5eFw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetGroupsLambdaFunction"
         },
-        "CodeSha256": "vegyb8xMFTPNYgu++EZQIqJ638LZViZAnsKzjOBJKTo="
+        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
       }
     },
     "ApiGatewayRestApi": {
@@ -876,7 +877,7 @@
         "ImageRequestModel"
       ]
     },
-    "ApiGatewayDeployment1621184419400": {
+    "ApiGatewayDeployment1621202410454": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1267,7 +1268,7 @@
     "CreateGroupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateGroupLambdaVersionuJMEijA3wHe2twr8QjBDnaOpsiKSMZl5VR5YOhOFlg"
+        "Ref": "CreateGroupLambdaVersionTJRMS0XgPd1aMqYXe2pyQhdGRN0yQOF7AtMS50w50"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-CreateGroupLambdaFunctionQualifiedArn"
@@ -1276,34 +1277,34 @@
     "GetImagesLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetImagesLambdaVersionW1lLhCpfmnHn2OUWui89B1hehOLMi618tbuYGg3Yg"
+        "Ref": "GetImagesLambdaVersionKuFwwLtKJJieh86RCOYY3lZX8g9BwBekb2f6fQHSDLw"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetImagesLambdaFunctionQualifiedArn"
       }
     },
-    "GetImageLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "GetImageLambdaVersionIIpiZRLKtxds16bbnNVAnGqxmDmIVMJ3jfNsKXtuo"
-      },
-      "Export": {
-        "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetImageLambdaFunctionQualifiedArn"
-      }
-    },
     "CreateImageLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateImageLambdaVersionlF0oi9rGlRIvQ6euX6T3iH01M5TNhseG7LNbirFbZvA"
+        "Ref": "CreateImageLambdaVersionGAkwxqCyADOtNH3FXWBilbdgKqyFcUyWKlvF8c8x6n4"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-CreateImageLambdaFunctionQualifiedArn"
       }
     },
+    "GetImageLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetImageLambdaVersionUGx3mgySEpynVoG6P8GqYOfOWR2Yf3bzVDs2jy7P8"
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetImageLambdaFunctionQualifiedArn"
+      }
+    },
     "GetGroupsLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetGroupsLambdaVersionnSo24OvIQo1sqM1mIkzivTX6PohVrvJGbjcyLteIY"
+        "Ref": "GetGroupsLambdaVersionJt2uOW1l43DotR0QPsCpSxpxrxmbduELOiCCE5eFw"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetGroupsLambdaFunctionQualifiedArn"
