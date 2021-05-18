@@ -15,6 +15,7 @@ provider:
   environment:
     GROUPS_TABLE: Groups-${self:provider.stage}
     IMAGES_TABLE: Images-${self:provider.stage}
+    CONNECTIONS_TABLE: Connections-${self:provider.stage}
     IMAGE_ID_INDEX: ImageIdIndex
     IMAGES_S3_BUCKET: aleen-10-05-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
@@ -44,6 +45,13 @@ provider:
         - s3:GetObject
         - '*'
       Resource: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*
+
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.CONNECTIONS_TABLE}
 functions:
   GetGroups:
     handler: src/lambda/http/getGroups.handler
@@ -97,6 +105,32 @@ functions:
             requestModels:
               'application/json': ImageRequest # the same as the on in custom >> documentations
 
+  SendUploadNotifications:
+    environment:
+      STAGE: ${self:provider.stage}
+      API_ID:
+        Ref: WebsocketsApi
+    handler: src/lambda/s3/sendNotifications.handler
+
+  ConnectHandler:
+    handler: src/lambda/websocket/connect.handler
+    events:
+      - websocket:
+          route: $connect
+
+  DisconnectHandler:
+    handler: src/lambda/websocket/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+
+  SyncWithElasticsearch:
+    handler: src/lambda/dynamoDb/elasticSearchSync.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt ImagesDynamoDBTable.StreamArn
+
 resources:
   Resources:
     RequestBodyValidator:
@@ -110,13 +144,12 @@ resources:
 
     AttachmentsBucket:
       Type: AWS::S3::Bucket
-      # DependsOn: SNSTopicPolicy
       Properties:
         BucketName: ${self:provider.environment.IMAGES_S3_BUCKET}
-        # NotificationConfiguration:
-        #   TopicConfigurations:
-        #     - Event: s3:ObjectCreated:Put
-        #       Topic: !Ref ImagesTopic
+        NotificationConfiguration:
+          LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt SendUploadNotificationsLambdaFunction.Arn
         CorsConfiguration:
           CorsRules:
             -
@@ -132,6 +165,15 @@ resources:
                 - HEAD
               MaxAge: 3000
 
+    SendUploadNotificationsPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !Ref SendUploadNotificationsLambdaFunction
+        Principal: s3.amazonaws.com
+        Action: lambda:InvokeFunction
+        SourceAccount: !Ref AWS::AccountId
+        SourceArn: arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}
+
     BucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
@@ -145,6 +187,32 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.IMAGES_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
+
+    ImagesSearch:
+        Type: AWS::Elasticsearch::Domain
+        Properties:
+          ElasticsearchVersion: '6.3'
+          DomainName: images-search-${self:provider.stage}
+          ElasticsearchClusterConfig:
+            DedicatedMasterEnabled: false
+            InstanceCount: '1'
+            ZoneAwarenessEnabled: false
+            InstanceType: t2.small.elasticsearch
+          EBSOptions:
+            EBSEnabled: true
+            Iops: 0
+            VolumeSize: 10
+            VolumeType: 'gp2'
+
+          AccessPolicies:
+            Version: '2012-10-17'
+            Statement:
+              -
+                Effect: Allow
+                Principal:
+                  AWS: '*'
+                Action: 'es:ESHttp*'
+                Resource: arn:aws:es:${self:provider.region}:${AWS::AccountId}:domain/images-search-${self:provider.stage}/*
 
     GroupsDynamoDBTable:
       Type: AWS::DynamoDB::Table
@@ -181,7 +249,23 @@ resources:
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
         TableName: ${self:provider.environment.IMAGES_TABLE}
+
+    WebSocketConnectionsDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.CONNECTIONS_TABLE}
 custom:
   webpack:
     webpackConfig: ./webpack.config.js
@@ -201,3 +285,4 @@ custom:
       - name: ImageRequest
         contentType: application/json
         schema: ${file(models/create-image-request.json)}
+

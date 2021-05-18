@@ -101,6 +101,30 @@
         "LogGroupName": "/aws/lambda/aleen-elsayed-serverless-10-05-dev-CreateImage"
       }
     },
+    "SendUploadNotificationsLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/aleen-elsayed-serverless-10-05-dev-SendUploadNotifications"
+      }
+    },
+    "ConnectHandlerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/aleen-elsayed-serverless-10-05-dev-ConnectHandler"
+      }
+    },
+    "DisconnectHandlerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/aleen-elsayed-serverless-10-05-dev-DisconnectHandler"
+      }
+    },
+    "SyncWithElasticsearchLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/aleen-elsayed-serverless-10-05-dev-SyncWithElasticsearch"
+      }
+    },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -190,6 +214,43 @@
                     "*"
                   ],
                   "Resource": "arn:aws:s3:::aleen-10-05-images-dev/*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:Scan",
+                    "dynamodb:PutItem",
+                    "dynamodb:DeleteItem"
+                  ],
+                  "Resource": "arn:aws:dynamodb:us-east-1:*:table/Connections-dev"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "execute-api:ManageConnections"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:execute-api:*:*:*/@connections/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetRecords",
+                    "dynamodb:GetShardIterator",
+                    "dynamodb:DescribeStream",
+                    "dynamodb:ListStreams"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "ImagesDynamoDBTable",
+                        "StreamArn"
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -218,7 +279,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/getGroups.handler",
         "Runtime": "nodejs12.x",
@@ -229,6 +290,7 @@
           "Variables": {
             "GROUPS_TABLE": "Groups-dev",
             "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
             "IMAGE_ID_INDEX": "ImageIdIndex",
             "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
             "SIGNED_URL_EXPIRATION": "300"
@@ -252,7 +314,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/createGroup.handler",
         "Runtime": "nodejs12.x",
@@ -263,6 +325,7 @@
           "Variables": {
             "GROUPS_TABLE": "Groups-dev",
             "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
             "IMAGE_ID_INDEX": "ImageIdIndex",
             "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
             "SIGNED_URL_EXPIRATION": "300"
@@ -286,7 +349,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/getImages.handler",
         "Runtime": "nodejs12.x",
@@ -297,6 +360,7 @@
           "Variables": {
             "GROUPS_TABLE": "Groups-dev",
             "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
             "IMAGE_ID_INDEX": "ImageIdIndex",
             "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
             "SIGNED_URL_EXPIRATION": "300"
@@ -320,7 +384,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/getImage.handler",
         "Runtime": "nodejs12.x",
@@ -331,6 +395,7 @@
           "Variables": {
             "GROUPS_TABLE": "Groups-dev",
             "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
             "IMAGE_ID_INDEX": "ImageIdIndex",
             "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
             "SIGNED_URL_EXPIRATION": "300"
@@ -354,7 +419,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621202420700-2021-05-16T22:00:20.700Z/aleen-elsayed-serverless-10-05.zip"
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
         "Handler": "src/lambda/http/createImage.handler",
         "Runtime": "nodejs12.x",
@@ -365,6 +430,7 @@
           "Variables": {
             "GROUPS_TABLE": "Groups-dev",
             "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
             "IMAGE_ID_INDEX": "ImageIdIndex",
             "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
             "SIGNED_URL_EXPIRATION": "300"
@@ -381,54 +447,238 @@
         "CreateImageLogGroup"
       ]
     },
-    "CreateGroupLambdaVersionTJRMS0XgPd1aMqYXe2pyQhdGRN0yQOF7AtMS50w50": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
+    "SendUploadNotificationsLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
       "Properties": {
-        "FunctionName": {
-          "Ref": "CreateGroupLambdaFunction"
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
-        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
-      }
+        "Handler": "src/lambda/s3/sendNotifications.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "aleen-elsayed-serverless-10-05-dev-SendUploadNotifications",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "GROUPS_TABLE": "Groups-dev",
+            "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
+            "IMAGE_ID_INDEX": "ImageIdIndex",
+            "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
+            "SIGNED_URL_EXPIRATION": "300",
+            "STAGE": "dev",
+            "API_ID": {
+              "Ref": "WebsocketsApi"
+            }
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "SendUploadNotificationsLogGroup"
+      ]
     },
-    "GetImagesLambdaVersionKuFwwLtKJJieh86RCOYY3lZX8g9BwBekb2f6fQHSDLw": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
+    "ConnectHandlerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
       "Properties": {
-        "FunctionName": {
-          "Ref": "GetImagesLambdaFunction"
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
-        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
-      }
+        "Handler": "src/lambda/websocket/connect.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "aleen-elsayed-serverless-10-05-dev-ConnectHandler",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "GROUPS_TABLE": "Groups-dev",
+            "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
+            "IMAGE_ID_INDEX": "ImageIdIndex",
+            "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
+            "SIGNED_URL_EXPIRATION": "300"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "ConnectHandlerLogGroup"
+      ]
     },
-    "CreateImageLambdaVersionGAkwxqCyADOtNH3FXWBilbdgKqyFcUyWKlvF8c8x6n4": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
+    "DisconnectHandlerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
       "Properties": {
-        "FunctionName": {
-          "Ref": "CreateImageLambdaFunction"
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
-        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
-      }
+        "Handler": "src/lambda/websocket/disconnect.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "aleen-elsayed-serverless-10-05-dev-DisconnectHandler",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "GROUPS_TABLE": "Groups-dev",
+            "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
+            "IMAGE_ID_INDEX": "ImageIdIndex",
+            "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
+            "SIGNED_URL_EXPIRATION": "300"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "DisconnectHandlerLogGroup"
+      ]
     },
-    "GetImageLambdaVersionUGx3mgySEpynVoG6P8GqYOfOWR2Yf3bzVDs2jy7P8": {
-      "Type": "AWS::Lambda::Version",
-      "DeletionPolicy": "Retain",
+    "SyncWithElasticsearchLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
       "Properties": {
-        "FunctionName": {
-          "Ref": "GetImageLambdaFunction"
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/aleen-elsayed-serverless-10-05/dev/1621377837579-2021-05-18T22:43:57.579Z/aleen-elsayed-serverless-10-05.zip"
         },
-        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
-      }
+        "Handler": "src/lambda/dynamoDb/elasticSearchSync.handler",
+        "Runtime": "nodejs12.x",
+        "FunctionName": "aleen-elsayed-serverless-10-05-dev-SyncWithElasticsearch",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "GROUPS_TABLE": "Groups-dev",
+            "IMAGES_TABLE": "Images-dev",
+            "CONNECTIONS_TABLE": "Connections-dev",
+            "IMAGE_ID_INDEX": "ImageIdIndex",
+            "IMAGES_S3_BUCKET": "aleen-10-05-images-dev",
+            "SIGNED_URL_EXPIRATION": "300"
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "SyncWithElasticsearchLogGroup"
+      ]
     },
-    "GetGroupsLambdaVersionJt2uOW1l43DotR0QPsCpSxpxrxmbduELOiCCE5eFw": {
+    "GetGroupsLambdaVersionNuTzt2Mezo98d5z6nMWbQDGpuvAL8rsh1ZZKQ6tVg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetGroupsLambdaFunction"
         },
-        "CodeSha256": "fblQ3X5K1cDka9a3GDiIHHDkZ02D7bRRy/ANx1wW/qQ="
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "CreateGroupLambdaVersioniS5uMOOmZFTOgrkqlfHTOkCyg6OIYraKLNKkkqSQQ": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CreateGroupLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "GetImagesLambdaVersionvDdotZcjtFMpl6Q5RLxgWaNozSBgqcIomFzmy8coMc": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetImagesLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "GetImageLambdaVersionnnU1rlUwQ8gkQATGXdt85WM1QzvAadlwXwIO8ycDGm0": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "GetImageLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "CreateImageLambdaVersiono5EGW9CfQyBlAQTOrtl2TfqzErKB9aw71UfgT8qLK4": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CreateImageLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "SendUploadNotificationsLambdaVersionN8UsZpuaWWsjfCXZZI1IEgvj44VUP15CvN93p9yKc": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SendUploadNotificationsLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "ConnectHandlerLambdaVersion2zK9fuzlg2FlHKJ6J7hNw02R22jYtIeklwfiRn0W74": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ConnectHandlerLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "SyncWithElasticsearchLambdaVersionfUowQMz7KubJUWHTOZJKipP5wXbjld8ZKAaxwvGY68": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SyncWithElasticsearchLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
+      }
+    },
+    "DisconnectHandlerLambdaVersionkp7YLTmVUBEQPjCF96WSvRxHI3alu1v1AJY1N5l2A": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "DisconnectHandlerLambdaFunction"
+        },
+        "CodeSha256": "4horJ6Q5+7A5YpOnL3ZKWWddgT09B6b31DMQid9Sw4A="
       }
     },
     "ApiGatewayRestApi": {
@@ -877,7 +1127,7 @@
         "ImageRequestModel"
       ]
     },
-    "ApiGatewayDeployment1621202410454": {
+    "ApiGatewayDeployment1621377829375": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1081,6 +1331,204 @@
         }
       }
     },
+    "WebsocketsApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "dev-aleen-elsayed-serverless-10-05-websockets",
+        "RouteSelectionExpression": "$request.body.action",
+        "Description": "Serverless Websockets",
+        "ProtocolType": "WEBSOCKET"
+      }
+    },
+    "ConnectHandlerWebsocketsIntegration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":apigateway:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":lambda:path/2015-03-31/functions/",
+              {
+                "Fn::GetAtt": [
+                  "ConnectHandlerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "/invocations"
+            ]
+          ]
+        }
+      }
+    },
+    "DisconnectHandlerWebsocketsIntegration": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":apigateway:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":lambda:path/2015-03-31/functions/",
+              {
+                "Fn::GetAtt": [
+                  "DisconnectHandlerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "/invocations"
+            ]
+          ]
+        }
+      }
+    },
+    "ConnectHandlerLambdaPermissionWebsockets": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": [
+        "WebsocketsApi",
+        "ConnectHandlerLambdaFunction"
+      ],
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ConnectHandlerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "DisconnectHandlerLambdaPermissionWebsockets": {
+      "Type": "AWS::Lambda::Permission",
+      "DependsOn": [
+        "WebsocketsApi",
+        "DisconnectHandlerLambdaFunction"
+      ],
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DisconnectHandlerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com"
+      }
+    },
+    "SconnectWebsocketsRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "RouteKey": "$connect",
+        "AuthorizationType": "NONE",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "ConnectHandlerWebsocketsIntegration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "SdisconnectWebsocketsRoute": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "RouteKey": "$disconnect",
+        "AuthorizationType": "NONE",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "DisconnectHandlerWebsocketsIntegration"
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "WebsocketsDeploymentStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "StageName": "dev",
+        "Description": "Serverless Websockets",
+        "DeploymentId": {
+          "Ref": "WebsocketsDeployment32FFbu4V68Jl26HmrPPzyihzsfYnwZy1loUTIVjd0"
+        }
+      }
+    },
+    "WebsocketsDeployment32FFbu4V68Jl26HmrPPzyihzsfYnwZy1loUTIVjd0": {
+      "Type": "AWS::ApiGatewayV2::Deployment",
+      "DependsOn": [
+        "SconnectWebsocketsRoute",
+        "SdisconnectWebsocketsRoute"
+      ],
+      "Properties": {
+        "ApiId": {
+          "Ref": "WebsocketsApi"
+        },
+        "Description": "Serverless Websockets"
+      }
+    },
+    "SyncWithElasticsearchEventSourceMappingDynamodbImagesDynamoDBTable": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "DependsOn": [
+        "IamRoleLambdaExecution"
+      ],
+      "Properties": {
+        "BatchSize": 10,
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "ImagesDynamoDBTable",
+            "StreamArn"
+          ]
+        },
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SyncWithElasticsearchLambdaFunction",
+            "Arn"
+          ]
+        },
+        "StartingPosition": "TRIM_HORIZON",
+        "Enabled": true
+      }
+    },
     "GroupRequestModel": {
       "Type": "AWS::ApiGateway::Model",
       "Properties": {
@@ -1148,6 +1596,19 @@
       "Type": "AWS::S3::Bucket",
       "Properties": {
         "BucketName": "aleen-10-05-images-dev",
+        "NotificationConfiguration": {
+          "LambdaConfigurations": [
+            {
+              "Event": "s3:ObjectCreated:*",
+              "Function": {
+                "Fn::GetAtt": [
+                  "SendUploadNotificationsLambdaFunction",
+                  "Arn"
+                ]
+              }
+            }
+          ]
+        },
         "CorsConfiguration": {
           "CorsRules": [
             {
@@ -1170,6 +1631,20 @@
         }
       }
     },
+    "SendUploadNotificationsPermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SendUploadNotificationsLambdaFunction"
+        },
+        "Principal": "s3.amazonaws.com",
+        "Action": "lambda:InvokeFunction",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": "arn:aws:s3:::aleen-10-05-images-dev"
+      }
+    },
     "BucketPolicy": {
       "Type": "AWS::S3::BucketPolicy",
       "Properties": {
@@ -1188,6 +1663,38 @@
         },
         "Bucket": {
           "Ref": "AttachmentsBucket"
+        }
+      }
+    },
+    "ImagesSearch": {
+      "Type": "AWS::Elasticsearch::Domain",
+      "Properties": {
+        "ElasticsearchVersion": "6.3",
+        "DomainName": "images-search-dev",
+        "ElasticsearchClusterConfig": {
+          "DedicatedMasterEnabled": false,
+          "InstanceCount": "1",
+          "ZoneAwarenessEnabled": false,
+          "InstanceType": "t2.small.elasticsearch"
+        },
+        "EBSOptions": {
+          "EBSEnabled": true,
+          "Iops": 0,
+          "VolumeSize": 10,
+          "VolumeType": "gp2"
+        },
+        "AccessPolicies": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Action": "es:ESHttp*",
+              "Resource": "arn:aws:es:us-east-1:${AWS::AccountId}:domain/images-search-dev/*"
+            }
+          ]
         }
       }
     },
@@ -1252,7 +1759,29 @@
           }
         ],
         "BillingMode": "PAY_PER_REQUEST",
+        "StreamSpecification": {
+          "StreamViewType": "NEW_IMAGE"
+        },
         "TableName": "Images-dev"
+      }
+    },
+    "WebSocketConnectionsDynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "TableName": "Connections-dev"
       }
     }
   },
@@ -1265,10 +1794,19 @@
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-ServerlessDeploymentBucketName"
       }
     },
+    "GetGroupsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GetGroupsLambdaVersionNuTzt2Mezo98d5z6nMWbQDGpuvAL8rsh1ZZKQ6tVg"
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetGroupsLambdaFunctionQualifiedArn"
+      }
+    },
     "CreateGroupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateGroupLambdaVersionTJRMS0XgPd1aMqYXe2pyQhdGRN0yQOF7AtMS50w50"
+        "Ref": "CreateGroupLambdaVersioniS5uMOOmZFTOgrkqlfHTOkCyg6OIYraKLNKkkqSQQ"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-CreateGroupLambdaFunctionQualifiedArn"
@@ -1277,37 +1815,64 @@
     "GetImagesLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetImagesLambdaVersionKuFwwLtKJJieh86RCOYY3lZX8g9BwBekb2f6fQHSDLw"
+        "Ref": "GetImagesLambdaVersionvDdotZcjtFMpl6Q5RLxgWaNozSBgqcIomFzmy8coMc"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetImagesLambdaFunctionQualifiedArn"
       }
     },
-    "CreateImageLambdaFunctionQualifiedArn": {
-      "Description": "Current Lambda function version",
-      "Value": {
-        "Ref": "CreateImageLambdaVersionGAkwxqCyADOtNH3FXWBilbdgKqyFcUyWKlvF8c8x6n4"
-      },
-      "Export": {
-        "Name": "sls-aleen-elsayed-serverless-10-05-dev-CreateImageLambdaFunctionQualifiedArn"
-      }
-    },
     "GetImageLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetImageLambdaVersionUGx3mgySEpynVoG6P8GqYOfOWR2Yf3bzVDs2jy7P8"
+        "Ref": "GetImageLambdaVersionnnU1rlUwQ8gkQATGXdt85WM1QzvAadlwXwIO8ycDGm0"
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetImageLambdaFunctionQualifiedArn"
       }
     },
-    "GetGroupsLambdaFunctionQualifiedArn": {
+    "CreateImageLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetGroupsLambdaVersionJt2uOW1l43DotR0QPsCpSxpxrxmbduELOiCCE5eFw"
+        "Ref": "CreateImageLambdaVersiono5EGW9CfQyBlAQTOrtl2TfqzErKB9aw71UfgT8qLK4"
       },
       "Export": {
-        "Name": "sls-aleen-elsayed-serverless-10-05-dev-GetGroupsLambdaFunctionQualifiedArn"
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-CreateImageLambdaFunctionQualifiedArn"
+      }
+    },
+    "SendUploadNotificationsLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SendUploadNotificationsLambdaVersionN8UsZpuaWWsjfCXZZI1IEgvj44VUP15CvN93p9yKc"
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-SendUploadNotificationsLambdaFunctionQualifiedArn"
+      }
+    },
+    "ConnectHandlerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ConnectHandlerLambdaVersion2zK9fuzlg2FlHKJ6J7hNw02R22jYtIeklwfiRn0W74"
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-ConnectHandlerLambdaFunctionQualifiedArn"
+      }
+    },
+    "SyncWithElasticsearchLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SyncWithElasticsearchLambdaVersionfUowQMz7KubJUWHTOZJKipP5wXbjld8ZKAaxwvGY68"
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-SyncWithElasticsearchLambdaFunctionQualifiedArn"
+      }
+    },
+    "DisconnectHandlerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "DisconnectHandlerLambdaVersionkp7YLTmVUBEQPjCF96WSvRxHI3alu1v1AJY1N5l2A"
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-DisconnectHandlerLambdaFunctionQualifiedArn"
       }
     },
     "ServiceEndpoint": {
@@ -1334,6 +1899,32 @@
       },
       "Export": {
         "Name": "sls-aleen-elsayed-serverless-10-05-dev-ServiceEndpoint"
+      }
+    },
+    "ServiceEndpointWebsocket": {
+      "Description": "URL of the service endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "wss://",
+            {
+              "Ref": "WebsocketsApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/dev"
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-aleen-elsayed-serverless-10-05-dev-ServiceEndpointWebsocket"
       }
     },
     "AwsDocApiId": {
